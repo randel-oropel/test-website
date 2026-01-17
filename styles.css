@@ -104,7 +104,7 @@ header.scrolled {
 }
 
 .logo {
-    max-width: 150px;
+    max-width: 50px;
     padding: var(--spacing-xs);
 }
 
@@ -797,4 +797,5 @@ video::-webkit-media-controls-picture-in-picture-button {
     text-align: left;
   }
 }
+
 
