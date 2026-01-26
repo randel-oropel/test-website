@@ -252,71 +252,83 @@ document.addEventListener("DOMContentLoaded", () => {
     isDragging = false;
   });
 });
-// --- INFINITE CAROUSEL LOGIC ---
-
+/// --- 2. INFINITE CAROUSEL LOGIC (RESTORED TEXT + VIDEOS) ---
   const carouselData = [
-    {
+    { 
+      // VIDEO 1 (Was "Interactive Learning Modules")
       label: "Interactive Learning Modules",
       title: "Interactive Learning <span class='highlight-pink'>Modules</span>",
-      desc: "Self-paced, microlearning units designed for focused comprehension and retention."
+      desc: "Self-paced, microlearning units designed for focused comprehension and retention.",
+      type: "video",
+      src: "video1.mp4"   // <--- Change this to the correct video file
     },
-    {
+    { 
+      // VIDEO 2 (Was "Opening Module Screens")
       label: "Opening module screen",
-      title: "Opening Module <span class='highlight-pink'>Screens</span>",
-      desc: "High-impact visual starts that set the tone for the entire learning journey."
+      title: "Public Trust <span class='highlight-pink'>Screens</span>",
+      desc: "Reinforcing integrity and accountability to build lasting community confidence.",
+      type: "video",
+      src: "video2.mp4"  // <--- Change this to the correct video file
     },
-    {
+    { 
+      // VIDEO 3 (Was "Decision-Based Scenarios")
       label: "Decision-Based Scenarios",
       title: "Decision-Based <span class='highlight-pink'>Scenarios</span>",
-      desc: "Branching paths that allow learners to see the consequences of their choices in real-time."
+      desc: "Branching paths that allow learners to see the consequences of their choices in real-time.",
+      type: "video",
+      src: "video3.mp4"  // <--- Change this to the correct video file
     }
   ];
 
   let currentIdx = 0;
-
+  
+  // The Slots (Cards)
   const slotL = document.getElementById('slotLeft');
   const slotC = document.getElementById('slotCenter');
   const slotR = document.getElementById('slotRight');
+  
+  // The Text Legend below
   const legTitle = document.getElementById('legendTitle');
   const legDesc = document.getElementById('legendDesc');
 
-  function updateCarousel() {
-    const total = carouselData.length;
-    
-    // Calculate indices with wrapping
-    const leftIdx = (currentIdx - 1 + total) % total;
-    const centerIdx = (currentIdx + total) % total;
-    const rightIdx = (currentIdx + 1 + total) % total;
-
-    // Update Placeholder Text
-    slotL.innerText = carouselData[leftIdx].label;
-    slotC.innerText = carouselData[centerIdx].label;
-    slotR.innerText = carouselData[rightIdx].label;
-
-    // Update Legend
-    legTitle.innerHTML = carouselData[centerIdx].title;
-    legDesc.innerText = carouselData[centerIdx].desc;
+  // HELPER: Generates the HTML string (Video tag)
+  function getMediaHTML(item, isCenter) {
+    // Only show controls if it's the center card
+    const controls = isCenter ? "controls" : ""; 
+    // Muted by default so they don't blast sound when loaded
+    return `<video src="${item.src}" ${controls} preload="metadata" style="width:100%; height:100%; object-fit:cover; border-radius:8px;"></video>`;
   }
 
-  document.getElementById('carouselPrev').addEventListener('click', () => {
-    currentIdx--;
+  if (slotL && slotC && slotR) {
+    function updateCarousel() {
+      const total = carouselData.length;
+      
+      const leftIdx = (currentIdx - 1 + total) % total;
+      const centerIdx = (currentIdx + total) % total;
+      const rightIdx = (currentIdx + 1 + total) % total;
+
+      // Inject VIDEOS into the cards
+      slotL.innerHTML = getMediaHTML(carouselData[leftIdx], false);
+      slotC.innerHTML = getMediaHTML(carouselData[centerIdx], true);
+      slotR.innerHTML = getMediaHTML(carouselData[rightIdx], false);
+
+      // Restore YOUR ORIGINAL TEXT in the legend
+      if (legTitle) legTitle.innerHTML = carouselData[centerIdx].title;
+      if (legDesc) legDesc.innerText = carouselData[centerIdx].desc;
+    }
+
+    document.getElementById('carouselPrev')?.addEventListener('click', () => { currentIdx--; updateCarousel(); });
+    document.getElementById('carouselNext')?.addEventListener('click', () => { currentIdx++; updateCarousel(); });
+    
     updateCarousel();
-  });
+  }
 
-  document.getElementById('carouselNext').addEventListener('click', () => {
-    currentIdx++;
-    updateCarousel();
-  });
 
-  // Run once to initialize
-  updateCarousel();
-
-  // --- DYNAMIC SCROLL OBSERVER ---
-
+  // --- 3. DYNAMIC SCROLL OBSERVER (Keep this here!) ---
   const scrollOptions = {
     root: null,
-    threshold: 0.1, // Trigger when 10% is visible
-    rootMargin: "0px 0px -200px 0px" // Slight offset so it retracts just before hitting bottom
+    threshold: 0.1, 
+    rootMargin: "0px 0px -200px 0px" 
   };
 
   const scrollObserver = new IntersectionObserver((entries) => {
@@ -324,17 +336,14 @@ document.addEventListener("DOMContentLoaded", () => {
       if (entry.isIntersecting) {
         entry.target.classList.add('is-visible');
       } else {
-        // This line makes it "retract" when you scroll past it
         entry.target.classList.remove('is-visible');
       }
     });
   }, scrollOptions);
 
-  // Apply to all reveal elements
   document.querySelectorAll('.reveal-on-scroll').forEach(el => {
     scrollObserver.observe(el);
   });
-
 // --- CONTACT FORM BACKEND CONNECTION ---
 const inquiryForm = document.getElementById('inquiry-form');
 const formSuccess = document.getElementById('form-success');

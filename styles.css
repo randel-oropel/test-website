@@ -2163,3 +2163,30 @@ video::-webkit-media-controls-picture-in-picture-button {
         margin-top: 10px;
     }
 }
+
+/* Styling for the static module image */
+.static-module-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures the image fills the box without stretching */
+    border-radius: var(--br-card); /* Uses your site's standard rounded corners */
+    display: block;
+}
+/* --- REMOVE GREEN OUTLINES --- */
+
+/* 1. Remove border from the cards themselves */
+.card, 
+.main-card, 
+.side-card {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important; /* Removes any glowing effects */
+}
+
+/* 2. Remove the focus outline when you click a video */
+.card video:focus,
+.main-card video:focus {
+    outline: none !important;
+    border: none !important;
+}
+
